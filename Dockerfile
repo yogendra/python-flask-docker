@@ -1,8 +1,17 @@
-FROM python:3.6
+FROM python:3.6 as base
 LABEL maintainer="lorenz.vanthillo@gmail.com"
-COPY . /app
+
+RUN mkdir /app && \
+  chown nobody /app
 WORKDIR /app
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+USER nobody
+
+
+FROM base
+COPY . .
+WORKDIR /app
 EXPOSE 8080
 ENTRYPOINT ["python"]
 CMD ["app/app.py"]
